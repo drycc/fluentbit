@@ -1,0 +1,13 @@
+{{- if (.Values.global.rbac) -}}
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ printf "%s:drycc-logger-fluentbit" .Release.Namespace | quote }}
+  labels:
+    app: drycc-logger-fluentbit
+    heritage: drycc
+rules:
+- apiGroups: [""]
+  resources: ["pods", "namespaces"]
+  verbs: ["list", "get", "watch"]
+{{- end -}}

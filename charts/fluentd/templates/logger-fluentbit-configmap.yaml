@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drycc-logger-fluentbit
+  namespace: {{ .Release.Namespace }}
+  labels:
+    heritage: drycc
+data:
+  parsers.conf: |
+    {{- (tpl .Values.config.parsers $)  | nindent 4 }}
+  plugins.conf: |
+    {{- (tpl .Values.config.plugins $)  | nindent 4 }}
+  fluent-bit.conf: |
+    {{- (tpl .Values.config.service $)  | nindent 4 }}
+    {{- (tpl .Values.config.inputs $)   | nindent 4 }}
+    {{- (tpl .Values.config.filters $)  | nindent 4 }}
+    {{- (tpl .Values.config.outputs $)  | nindent 4 }}

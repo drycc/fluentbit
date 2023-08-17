@@ -1,0 +1,9 @@
+name: fluentbit
+home: https://github.com/drycc/fluentbit
+apiVersion: v2
+appVersion: 1.0.0
+version: v1.0.0
+description: Log shipping mechanism for Drycc Workflow.
+maintainers:
+  - name: Drycc Team
+    email: engineering@drycc.com

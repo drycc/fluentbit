@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -eo pipefail
+shopt -s expand_aliases
+
+eval "cat <<EOF
+$(</opt/drycc/fluent-bit/templates/plugins.conf)
+EOF
+" 2> /dev/null > /opt/drycc/fluent-bit/etc/fluent-bit/plugins.conf
+
+eval "cat <<EOF
+$(</opt/drycc/fluent-bit/templates/parsers.conf)
+EOF
+" 2> /dev/null > /opt/drycc/fluent-bit/etc/fluent-bit/parsers.conf
+
+eval "cat <<EOF
+$(</opt/drycc/fluent-bit/templates/fluent-bit.conf)
+EOF
+" 2> /dev/null > /opt/drycc/fluent-bit/etc/fluent-bit/fluent-bit.conf
+
+fluent-bit -c /opt/drycc/fluent-bit/etc/fluent-bit/fluent-bit.conf

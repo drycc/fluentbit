@@ -1,0 +1,80 @@
+imageOrg: "drycc"
+imagePullPolicy: "Always"
+imageTag: "canary"
+imageRegistry: "registry.drycc.cc"
+# limitsCpu: "100m"
+# limitsMemory: "50Mi"
+
+redis:
+  replicas: 1
+
+## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/configuration-file
+config:
+  service: |
+    [SERVICE]
+        Flush               1
+        Daemon              Off
+        Log_Level           info
+        Plugins_File        /opt/drycc/fluent-bit/etc/fluent-bit/plugins.conf
+        Parsers_File        /opt/drycc/fluent-bit/etc/fluent-bit/parsers.conf
+
+  ## https://docs.fluentbit.io/manual/pipeline/inputs
+  inputs: |
+    [INPUT]
+        Name                tail
+        Path                /var/log/containers/*.log
+        DB                  /var/log/containers.pos.db
+        DB.locking          true
+        Offset_Key          offset
+        Tag                 kubernetes.*
+        Read_from_Head      true
+        multiline.parser    docker,cri
+
+  ## https://docs.fluentbit.io/manual/pipeline/filters
+  filters: |
+    [FILTER]
+        Name                kubernetes
+        Match               kubernetes.*
+        Kube_URL            https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Kube_Tag_Prefix     kubernetes.var.log.containers.
+        tls.verify          false
+
+  ## https://docs.fluentbit.io/manual/pipeline/outputs
+  outputs: |
+    [OUTPUT]
+        Name                drycc
+        Match               *
+        Addrs               ${DRYCC_REDIS_ADDRS}
+        Stream              drycc
+        Max_Len             3000
+        Password            ${DRYCC_REDIS_PASSWORD}
+        Controller_Name     drycc-controller
+        Controller_Regex    ^(INFO|WARN|DEBUG|ERROR)\s+(\[(\S+)\])+:(.*)
+        Exclude_Namespaces  drycc,drycc-manager,drycc-helmbroker,kube-system,metallb
+  ## https://docs.fluentbit.io/manual/pipeline/parsers
+  parsers: |
+    [PARSER]
+        Name         docker
+        Format       json
+        Time_Key     time
+        Time_Format  %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep    On
+
+    [PARSER]
+        # http://rubular.com/r/tjUt3Awgg4
+        Name cri
+        Format regex
+        Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+        Time_Keep   On
+  ## https://docs.fluentbit.io/manual/development/golang-output-plugins
+  plugins: |
+    [PLUGINS]
+        Path ${FLUENT_BIT_PLUGINS_PATH}/out_drycc.so
+
+# Role-Based Access Control for Kubernetes >= 1.5
+global:
+  rbac: false

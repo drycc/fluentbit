@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: drycc-logger-fluentbit
+  labels:
+    heritage: drycc
+  annotations:
+    component.drycc.cc/version: {{ .Values.imageTag }}
+spec:
+  {{- if ge .Capabilities.KubeVersion.Minor "6" }}
+  updateStrategy:
+    type: RollingUpdate
+  {{- end }}
+  selector:
+    matchLabels:
+      app: drycc-logger-fluentbit
+      heritage: drycc
+  template:
+    metadata:
+      name: drycc-logger-fluentbit
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        heritage: drycc
+        app: drycc-logger-fluentbit
+    spec:
+      serviceAccount: drycc-logger-fluentbit
+      initContainers:
+      - name: drycc-logger-fluentbit-init
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/python-dev:latest
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        args:
+        - netcat
+        - -v
+        - -a
+        - $(DRYCC_REDIS_ADDRS)
+        env:
+        - name: DRYCC_REDIS_ADDRS
+          valueFrom:
+            secretKeyRef:
+              name: redis-creds
+              key: addrs
+      containers:
+      - name: drycc-logger-fluentbit
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/fluentbit:{{.Values.imageTag}}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        {{- if or (.Values.limitsCpu) (.Values.limitsMemory)}}
+        resources:
+          limits:
+            {{- if (.Values.limitsCpu) }}
+            cpu: {{.Values.limitsCpu}}
+            {{- end}}
+            {{- if (.Values.limitsMemory) }}
+            memory: {{.Values.limitsMemory}}
+            {{- end}}
+        {{- end}}
+        env:
+        - name: DRYCC_REDIS_ADDRS
+          valueFrom:
+            secretKeyRef:
+              name: redis-creds
+              key: addrs
+        - name: DRYCC_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-creds
+              key: password
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: drycc-logger-fluentbit
+          mountPath: /opt/drycc/fluent-bit/templates
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: drycc-logger-fluentbit
+        configMap:
+          name: drycc-logger-fluentbit
