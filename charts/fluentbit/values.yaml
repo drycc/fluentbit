@@ -8,11 +8,14 @@ imageRegistry: "registry.drycc.cc"
 redis:
   replicas: 1
 
+# Interval to flush output (seconds)
+flush: 1
+
 ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/configuration-file
 config:
   service: |
     [SERVICE]
-        Flush               1
+        Flush               {{ .Values.flush }}
         Daemon              Off
         Log_Level           info
         Plugins_File        /opt/drycc/fluent-bit/etc/fluent-bit/plugins.conf

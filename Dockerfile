@@ -11,7 +11,7 @@ RUN export GO111MODULE=on \
   && init-stack go mod vendor \
   && init-stack go build \
     -ldflags "-X main.Revision=${BUILD_TAG} -X main.BuildDate=${BUILD_DATE}" \
-    -buildmode=c-shared -o /var/lib/fluent-bit/out_drycc.so drycc.go
+    -buildmode=c-shared -o /var/lib/fluent-bit/out_drycc.so plugin/out_drycc.go
 
 
 FROM registry.drycc.cc/drycc/base:${CODENAME}
