@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: drycc-logger-fluentbit
+  name: logger-fluentbit-config
   namespace: {{ .Release.Namespace }}
   labels:
     heritage: drycc

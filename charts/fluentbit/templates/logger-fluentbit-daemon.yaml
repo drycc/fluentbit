@@ -66,12 +66,12 @@ spec:
         volumeMounts:
         - name: varlog
           mountPath: /var/log
-        - name: drycc-logger-fluentbit
+        - name: logger-fluentbit-config
           mountPath: /opt/drycc/fluent-bit/templates
       volumes:
       - name: varlog
         hostPath:
           path: /var/log
-      - name: drycc-logger-fluentbit
+      - name: logger-fluentbit-config
         configMap:
-          name: drycc-logger-fluentbit
+          name: logger-fluentbit-config

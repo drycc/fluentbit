@@ -59,24 +59,24 @@ config:
   ## https://docs.fluentbit.io/manual/pipeline/parsers
   parsers: |
     [PARSER]
-        Name         docker
-        Format       json
-        Time_Key     time
-        Time_Format  %Y-%m-%dT%H:%M:%S.%L
-        Time_Keep    On
+        Name                docker
+        Format              json
+        Time_Key            time
+        Time_Format         %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep           On
 
     [PARSER]
         # http://rubular.com/r/tjUt3Awgg4
-        Name cri
-        Format regex
-        Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
-        Time_Key    time
-        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-        Time_Keep   On
+        Name                cri
+        Format              regex
+        Regex               ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+        Time_Key            time
+        Time_Format         %Y-%m-%dT%H:%M:%S.%L%z
+        Time_Keep           On
   ## https://docs.fluentbit.io/manual/development/golang-output-plugins
   plugins: |
     [PLUGINS]
-        Path ${FLUENT_BIT_PLUGINS_PATH}/out_drycc.so
+        Path                ${FLUENT_BIT_PLUGINS_PATH}/out_drycc.so
 
 # Role-Based Access Control for Kubernetes >= 1.5
 global:
