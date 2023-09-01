@@ -19,15 +19,20 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   FLUENT_BIT_VERSION=2.1.8 \
-  FLUENT_BIT_PLUGINS_PATH=/opt/drycc/fluent-bit/plugins
+  DRYCC_HOME_DIR=/opt/drycc \
+  FLUENT_BIT_PLUGINS_PATH=${DRYCC_HOME_DIR}/fluent-bit/plugins
+  
+RUN groupadd drycc --gid ${DRYCC_GID} \
+  && useradd drycc -u ${DRYCC_UID} -g ${DRYCC_GID} -s /bin/bash -m -d ${DRYCC_HOME_DIR}
 
 RUN install-stack fluent-bit ${FLUENT_BIT_VERSION} \
   && mkdir -p ${FLUENT_BIT_PLUGINS_PATH} \
-  && chown -R ${DRYCC_UID}:${DRYCC_GID} /opt/drycc/fluent-bit
+  && chown -R ${DRYCC_UID}:${DRYCC_GID} ${DRYCC_HOME_DIR}/fluent-bit
 
 COPY --chown=${DRYCC_UID}:${DRYCC_GID} --from=build /var/lib/fluent-bit/out_drycc.so ${FLUENT_BIT_PLUGINS_PATH}
 
 ADD rootfs /
+
 USER ${DRYCC_UID}
 
 CMD ["/usr/local/bin/boot"]
