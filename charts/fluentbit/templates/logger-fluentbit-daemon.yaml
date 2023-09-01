@@ -75,3 +75,7 @@ spec:
       - name: logger-fluentbit-config
         configMap:
           name: logger-fluentbit-config
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsUser: 0

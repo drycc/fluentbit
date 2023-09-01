@@ -16,14 +16,18 @@ RUN export GO111MODULE=on \
 
 FROM registry.drycc.cc/drycc/base:${CODENAME}
 
-ENV FLUENT_BIT_VERSION=2.1.8
-ENV FLUENT_BIT_PLUGINS_PATH=/opt/drycc/fluent-bit/plugins
+ENV DRYCC_UID=1001 \
+  DRYCC_GID=1001 \
+  FLUENT_BIT_VERSION=2.1.8 \
+  FLUENT_BIT_PLUGINS_PATH=/opt/drycc/fluent-bit/plugins
 
-USER root
-RUN install-stack fluent-bit ${FLUENT_BIT_VERSION}
-RUN mkdir -p ${FLUENT_BIT_PLUGINS_PATH}
-COPY --from=build /var/lib/fluent-bit/out_drycc.so ${FLUENT_BIT_PLUGINS_PATH}
+RUN install-stack fluent-bit ${FLUENT_BIT_VERSION} \
+  && mkdir -p ${FLUENT_BIT_PLUGINS_PATH} \
+  && chown -R ${DRYCC_UID}:${DRYCC_GID} /opt/drycc/fluent-bit
+
+COPY --chown=${DRYCC_UID}:${DRYCC_GID} --from=build /var/lib/fluent-bit/out_drycc.so ${FLUENT_BIT_PLUGINS_PATH}
 
 ADD rootfs /
+USER ${DRYCC_UID}
 
 CMD ["/usr/local/bin/boot"]
