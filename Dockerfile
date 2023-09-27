@@ -3,7 +3,6 @@ ARG BUILD_TAG
 ARG BUILD_DATE
 
 FROM registry.drycc.cc/drycc/go-dev AS build
-ARG LDFLAGS
 ADD . /workspace
 RUN export GO111MODULE=on \
   && cd /workspace \

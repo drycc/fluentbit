@@ -9,36 +9,33 @@ REPO_PATH := github.com/drycc/${SHORT_NAME}
 DEV_ENV_BUILD = go build -ldflags "-X 'main.Revision=$(BUILD_TAG)' -X 'main.BuildDate=$(BUILD_DATE)'" -buildmode=c-shared -o _dist/out_drycc.so plugin/out_drycc.go
 DEV_ENV_IMAGE := ${DEV_REGISTRY}/drycc/go-dev
 DEV_ENV_WORK_DIR := /opt/drycc/go/src/${REPO_PATH}
-DEV_ENV_PREFIX := docker run --rm -v ${CURDIR}:${DEV_ENV_WORK_DIR} -w ${DEV_ENV_WORK_DIR}
+DEV_ENV_PREFIX := podman run --rm -v ${CURDIR}:${DEV_ENV_WORK_DIR} -w ${DEV_ENV_WORK_DIR}
 
 include versioning.mk
 
 
-build: docker-build
-push: docker-push
+build: podman-build
+push: podman-push
 
-check-docker:
-	@if [ -z $$(which docker) ]; then \
-	  echo "Missing docker client which is required for development"; \
+check-podman:
+	@if [ -z $$(which podman) ]; then \
+	  echo "Missing podman client which is required for development"; \
 	  exit 2; \
 	fi
 
-bootstrap: check-docker
+bootstrap: check-podman
 	$(DEV_ENV_PREFIX) $(DEV_ENV_IMAGE) go mod vendor
 
-build-binary: check-docker
+build-binary: check-podman
 	$(DEV_ENV_PREFIX) $(DEV_ENV_IMAGE) $(DEV_ENV_BUILD)
 
-docker-build: check-docker
-	docker build --build-arg CODENAME=${CODENAME} --build-arg BUILD_TAG=${BUILD_TAG} --build-arg BUILD_DATE=${BUILD_DATE} -t ${IMAGE} .
-	docker tag ${IMAGE} ${MUTABLE_IMAGE}
-
-docker-buildx: check-docker
-	docker buildx build --platform ${PLATFORM} --build-arg CODENAME=${CODENAME} --build-arg BUILD_TAG=${BUILD_TAG} --build-arg BUILD_DATE=${BUILD_DATE} -t ${IMAGE} . --push
+podman-build: check-podman
+	podman build --build-arg CODENAME=${CODENAME} --build-arg BUILD_TAG=${BUILD_TAG} --build-arg BUILD_DATE=${BUILD_DATE} -t ${IMAGE} .
+	podman tag ${IMAGE} ${MUTABLE_IMAGE}
 
 test: test-style
 
-test-style: check-docker
+test-style: check-podman
 	$(DEV_ENV_PREFIX) $(DEV_ENV_IMAGE) make style-check
 
 style-check:
