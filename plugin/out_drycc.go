@@ -8,8 +8,6 @@ import (
 	"sort"
 	"strings"
 
-	"golang.org/x/exp/slices"
-
 	"github.com/fluent/fluent-bit-go/output"
 	redis "github.com/redis/go-redis/v9"
 )
@@ -166,20 +164,12 @@ func toTimestamp(ts interface{}) string {
 
 func checkRecord(record map[interface{}]interface{}) bool {
 	if kubernetes, ok := record["kubernetes"].(map[interface{}]interface{}); ok {
-		if labels, ok := kubernetes["labels"].(map[interface{}]interface{}); ok {
-			// application logs deployed by drycc
-			heritage := fmt.Sprintf("%s", labels["heritage"])
-			namespace := fmt.Sprintf("%s", kubernetes["namespace_name"])
-			if !slices.Contains(ExcludeNamespaces, namespace) && heritage == "drycc" && labels["app"] != nil {
+		// drycc controller
+		container := fmt.Sprintf("%s", kubernetes["container_name"])
+		if ok && strings.HasPrefix(container, ControllerName) {
+			log := fmt.Sprintf("%s", record["log"])
+			if ok && len(ControllerRegex.FindStringSubmatch(log)) > 0 {
 				return true
-			}
-			// drycc controller
-			container := fmt.Sprintf("%s", kubernetes["container_name"])
-			if ok && strings.HasPrefix(container, ControllerName) {
-				log := fmt.Sprintf("%s", record["log"])
-				if ok && len(ControllerRegex.FindStringSubmatch(log)) > 0 {
-					return true
-				}
 			}
 		}
 	}
