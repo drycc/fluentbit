@@ -1,11 +1,10 @@
 module github.com/drycc/fluentbit
 
-go 1.20
+go 1.23
 
 require (
 	github.com/fluent/fluent-bit-go v0.0.0-20230731091245-a7a013e2473c
-	github.com/redis/go-redis/v9 v9.0.5
-	golang.org/x/exp v0.0.0-20230811145659-89c5cff77bcb
+	github.com/redis/go-redis/v9 v9.7.0
 )
 
 require (
