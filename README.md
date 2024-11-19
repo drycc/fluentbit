@@ -31,4 +31,4 @@ Fluent Bit currently supports integration of Golang plugins built as shared obje
 ### Drycc Output
 Drycc output is a custom fluentbit plugin that was written to forward data directly to drycc components while filtering out data that we did not care about. We have 2 pieces of information we care about currently.
 
-Logs from applications that are written to stdout within the container and the controller logs that represent actions against those applications. These logs are sent to an internal messaging system ([REIDS](https://redis.io/topics/streams-intro)) on a configurable topic. The logger component then reads those messages and stores the data in an ring buffer.
+Logs from applications that are written to stdout within the container and the controller logs that represent actions against those applications. These logs are sent to an internal messaging system ([VALKEY](https://valkey.io)) on a configurable topic. The logger component then reads those messages and stores the data in an ring buffer.

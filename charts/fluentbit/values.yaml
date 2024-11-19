@@ -20,11 +20,11 @@ diagnosticMode:
   args:
     - infinity
 
-redis:
-  replicas: 1
-
 # Interval to flush output (seconds)
 flush: 1
+
+# external valkey configuration
+valkeyUrl: ""
 
 ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/configuration-file
 config:
@@ -65,10 +65,9 @@ config:
     [OUTPUT]
         Name                drycc
         Match               kubernetes.*
-        Addrs               ${DRYCC_REDIS_ADDRS}
         Stream              logs
         Max_Len             3000
-        Password            ${DRYCC_REDIS_PASSWORD}
+        Valkey_URL          ${DRYCC_VALKEY_URL}
         Controller_Name     drycc-controller
         Controller_Regex    ^(INFO|WARN|DEBUG|ERROR)\s+(\[(\S+)\])+:(.*)
         Exclude_Namespaces  drycc,drycc-manager,drycc-helmbroker,kube-system,metallb
