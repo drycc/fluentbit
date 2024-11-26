@@ -40,7 +40,7 @@ config:
   inputs: |
     [INPUT]
         Name                tail
-        Path                /var/log/containers/*.log
+        Path                /var/log/containers/*_{{ .Release.Namespace }}_*.log
         DB                  /var/log/containers.pos.db
         DB.locking          true
         Offset_Key          offset

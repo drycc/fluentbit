@@ -20,13 +20,6 @@ spec:
         heritage: drycc
         app: drycc-logger-fluentbit
     spec:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: controller
-            topologyKey: kubernetes.io/hostname
       serviceAccount: drycc-logger-fluentbit
       initContainers:
       - name: drycc-logger-fluentbit-init
