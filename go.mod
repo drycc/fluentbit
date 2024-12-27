@@ -4,8 +4,8 @@ go 1.23
 
 require (
 	github.com/fluent/fluent-bit-go v0.0.0-20230731091245-a7a013e2473c
-	github.com/valkey-io/valkey-go v1.0.49
-	github.com/valkey-io/valkey-go/valkeycompat v1.0.49
+	github.com/valkey-io/valkey-go v1.0.52
+	github.com/valkey-io/valkey-go/valkeycompat v1.0.52
 )
 
 require (
