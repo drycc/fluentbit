@@ -60,6 +60,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 }
 
 //export FLBPluginFlushCtx
+//revive:disable:unused-parameter
 func FLBPluginFlushCtx(ctx, data unsafe.Pointer, length C.int, _ *C.char) int {
 	status := output.FLB_OK
 	context, cancel := context.WithTimeout(context.Background(), time.Second*30)
