@@ -92,3 +92,6 @@ config:
   plugins: |
     [PLUGINS]
         Path                ${FLUENT_BIT_PLUGINS_PATH}/out_drycc.so
+
+valkey:
+  enabled: true
