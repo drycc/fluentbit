@@ -2,8 +2,6 @@ imageOrg: "drycc"
 imagePullPolicy: "Always"
 imageTag: "canary"
 imageRegistry: "registry.drycc.cc"
-# limitsCpu: "100m"
-# limitsMemory: "50Mi"
 
 ## Enable diagnostic mode
 ##
@@ -19,6 +17,14 @@ diagnosticMode:
   ##
   args:
     - infinity
+
+resources: {}
+  # limits:
+  #   cpu: 200m
+  #   memory: 50Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 30Mi
 
 # Interval to flush output (seconds)
 flush: 1
