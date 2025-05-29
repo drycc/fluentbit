@@ -17,7 +17,7 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
-  FLUENT_BIT_VERSION=4.0.0 \
+  FLUENT_BIT_VERSION=4.0.2 \
   DRYCC_HOME_DIR=/opt/drycc \
   FLUENT_BIT_PLUGINS_PATH=${DRYCC_HOME_DIR}/fluent-bit/plugins
   
