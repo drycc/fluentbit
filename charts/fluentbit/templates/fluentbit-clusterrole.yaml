@@ -1,9 +1,9 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: {{ printf "%s:drycc-logger-fluentbit" .Release.Namespace | quote }}
+  name: {{ printf "%s:drycc-fluentbit" .Release.Namespace | quote }}
   labels:
-    app: drycc-logger-fluentbit
+    app: drycc-fluentbit
     heritage: drycc
 rules:
 - apiGroups: [""]

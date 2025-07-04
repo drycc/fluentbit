@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: drycc-logger-fluentbit
+  name: drycc-fluentbit
   labels:
     heritage: drycc
   annotations:
@@ -11,33 +11,37 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: drycc-logger-fluentbit
+      app: drycc-fluentbit
       heritage: drycc
   template:
     metadata:
-      name: drycc-logger-fluentbit
+      name: drycc-fluentbit
       labels: {{- include "common.labels.standard" . | nindent 8 }}
         heritage: drycc
-        app: drycc-logger-fluentbit
+        app: drycc-fluentbit
     spec:
-      serviceAccount: drycc-logger-fluentbit
+      serviceAccount: drycc-fluentbit
       initContainers:
-      - name: drycc-logger-fluentbit-init
+      - name: drycc-fluentbit-init
         image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/python-dev:latest
         imagePullPolicy: {{.Values.imagePullPolicy}}
         args:
         - netcat
         - -v
         - -u
-        - $(DRYCC_VALKEY_URL)
+        - http://drycc-quickwit-indexer.{{ $.Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:7280
         {{- include "fluentbit.envs" . | indent 8 }}
       containers:
-      - name: drycc-logger-fluentbit
+      - name: drycc-fluentbit
         image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/fluentbit:{{.Values.imageTag}}
         imagePullPolicy: {{.Values.imagePullPolicy}}
         {{- if .Values.diagnosticMode.enabled }}
         command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 10 }}
         args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 10 }}
+        {{- else }}
+        args:
+        - fluent-bit
+        - --config=/opt/drycc/fluent-bit/etc/fluent-bit/fluent-bit.conf
         {{- end }}
         {{- with index .Values "resources" }}
         resources:
@@ -47,15 +51,15 @@ spec:
         volumeMounts:
         - name: varlog
           mountPath: /var/log
-        - name: logger-fluentbit-config
-          mountPath: /opt/drycc/fluent-bit/templates
+        - name: fluentbit-config
+          mountPath: /opt/drycc/fluent-bit/etc/fluent-bit
       volumes:
       - name: varlog
         hostPath:
           path: /var/log
-      - name: logger-fluentbit-config
+      - name: fluentbit-config
         configMap:
-          name: logger-fluentbit-config
+          name: fluentbit-config
       securityContext:
         fsGroup: 0
         runAsGroup: 0
