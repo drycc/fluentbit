@@ -1,7 +1,6 @@
 SHORT_NAME ?= fluentbit
 BUILD_TAG ?= git-$(shell git rev-parse --short HEAD)
 BUILD_DATE := $(shell date --rfc-3339=ns | tr " " T)
-SHELL_SCRIPTS = $(wildcard rootfs/usr/local/bin/*)
 DRYCC_REGISTRY ?= ${DEV_REGISTRY}
 IMAGE_PREFIX ?= drycc
 PLATFORM ?= linux/amd64,linux/arm64
@@ -42,7 +41,6 @@ style-check:
 	gofmt -l -w -s plugin
 	go vet plugin
 	lint
-	shellcheck $(SHELL_SCRIPTS)
 
 clean:
 	rm -rf _dist
