@@ -66,7 +66,7 @@ func FLBPluginInit(ctx unsafe.Pointer) int {
 			return buffer
 		},
 	}
-	IndexNameTemplate, err = template.New("url").Funcs(sprig.FuncMap()).Delims("${", "}").Parse(IndexName)
+	IndexNameTemplate, err = template.New("index").Funcs(sprig.FuncMap()).Parse(IndexName)
 	if err != nil {
 		panic(err)
 	}
@@ -123,21 +123,28 @@ func formatTime(ts any, format string) string {
 	default:
 		timestamp = time.Now()
 	}
-	return timestamp.Format(strings.NewReplacer(
-		"%Y", "2006",
-		"%y", "06",
-		"%m", "01",
-		"%d", "02",
-		"%H", "15",
-		"%I", "03",
-		"%M", "04",
-		"%S", "05",
-		"%p", "PM",
-		"%L", "000",
-		"%f", "000000",
-		"%z", "-0700",
-		"%Z", "MST",
-	).Replace(format))
+	switch format {
+	case "rfc3399":
+		return timestamp.Format(time.RFC3339)
+	case "unix_timestamp":
+		return fmt.Sprint(timestamp.Unix())
+	default:
+		return timestamp.Format(strings.NewReplacer(
+			"%Y", "2006",
+			"%y", "06",
+			"%m", "01",
+			"%d", "02",
+			"%H", "15",
+			"%I", "03",
+			"%M", "04",
+			"%S", "05",
+			"%p", "PM",
+			"%L", "000",
+			"%f", "000000",
+			"%z", "-0700",
+			"%Z", "MST",
+		).Replace(format))
+	}
 }
 
 func convertMap(values map[any]any) map[string]any {

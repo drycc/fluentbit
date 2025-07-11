@@ -76,10 +76,10 @@ config:
         Match               kubernetes.*
         Base_URL            http://drycc-quickwit-indexer.{{ $.Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:7280
         Compress            true
-        Index_Name          {{ .Values.quickwit.logIndexPrefix }}${ .kubernetes.namespace_name | default "{{ .Release.Namespace }}" }
+        Index_Name          {{printf "%s{{ %s | default \"%s\" }}" .Values.quickwit.logIndexPrefix ".kubernetes.namespace_name" .Release.Namespace }}
         Buffer_Size         65536
         Json_Date_Key       timestamp
-        Json_Date_Format    %Y-%m-%dT%H:%M:%S%z
+        Json_Date_Format    rfc3399
   ## https://docs.fluentbit.io/manual/pipeline/parsers
   parsers: |
     [PARSER]
@@ -101,3 +101,6 @@ config:
   plugins: |
     [PLUGINS]
         Path                /opt/drycc/fluent-bit/lib/out_quickwit.so
+
+global:
+  clusterDomain: "cluster.local"
