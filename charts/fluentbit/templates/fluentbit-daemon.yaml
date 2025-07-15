@@ -29,7 +29,7 @@ spec:
         - netcat
         - -v
         - -u
-        - http://drycc-quickwit-indexer.{{ $.Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:7280
+        - http://drycc-quickwit-indexer:7280
         {{- include "fluentbit.envs" . | indent 8 }}
       containers:
       - name: drycc-fluentbit

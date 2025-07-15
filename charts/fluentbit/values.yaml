@@ -74,7 +74,7 @@ config:
     [OUTPUT]
         Name                quickwit
         Match               kubernetes.*
-        Base_URL            http://drycc-quickwit-indexer.{{ $.Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:7280
+        Base_URL            http://drycc-quickwit-indexer:7280
         Compress            true
         Index_Name          {{printf "%s{{ %s | default \"%s\" }}" .Values.quickwit.logIndexPrefix ".kubernetes.namespace_name" .Release.Namespace }}
         Buffer_Size         65536
@@ -101,6 +101,3 @@ config:
   plugins: |
     [PLUGINS]
         Path                /opt/drycc/fluent-bit/lib/out_quickwit.so
-
-global:
-  clusterDomain: "cluster.local"
