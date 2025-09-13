@@ -17,9 +17,9 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
-  FLUENT_BIT_VERSION=4.0.2 \
+  FLUENT_BIT_VERSION=4.0.9 \
   DRYCC_HOME_DIR=/opt/drycc
-  
+
 RUN groupadd drycc --gid ${DRYCC_GID} \
   && useradd drycc -u ${DRYCC_UID} -g ${DRYCC_GID} -s /bin/bash -m -d ${DRYCC_HOME_DIR}
 
