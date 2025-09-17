@@ -1,11 +1,10 @@
+// drycc quickwit plugin
 package main
 
 import (
 	"C"
-	"unsafe"
-
-	"github.com/fluent/fluent-bit-go/output"
 )
+
 import (
 	"bytes"
 	"crypto/tls"
@@ -18,8 +17,10 @@ import (
 	"sync"
 	"text/template"
 	"time"
+	"unsafe"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/fluent/fluent-bit-go/output"
 )
 
 var (
