@@ -15,7 +15,7 @@ RUN export GO111MODULE=on \
 
 FROM registry.drycc.cc/drycc/base:${CODENAME}
 
-ENV DRYCC_UID=1001 \
+ARG DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   FLUENT_BIT_VERSION=4.0.9 \
   DRYCC_HOME_DIR=/opt/drycc
