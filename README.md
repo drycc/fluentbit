@@ -16,10 +16,10 @@ Once you have installed the Helm client, you can deploy a Fluentbit Chart into a
 
 ### Chart repos
 
-* Stable Charts: oci://registry.drycc.cc/charts/fluentbit
-* Testing Charts: oci://registry.drycc.cc/charts-testing/fluentbit
+* Stable Charts: oci://registry.drycc.cc/drycc/charts/fluentbit
+* Testing Charts: oci://registry.drycc.cc/drycc/charts-testing/fluentbit
 
 ### Chart values
 ```sh
-helm show values oci://registry.drycc.cc/charts-testing/fluentbit
+helm show values oci://registry.drycc.cc/drycc/charts-testing/fluentbit
 ```
